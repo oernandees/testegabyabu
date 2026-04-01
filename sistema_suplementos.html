@@ -1,0 +1,564 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+:root{--bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;--border:#3a3a3a;--accent:#7F77DD;--accent2:#5DCAA5;--danger:#E24B4A;--warn:#EF9F27;--text:#e8e8e8;--text2:#aaa}
+.wrap{background:var(--bg);min-height:600px;padding:0}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:16px;font-weight:500;color:var(--accent)}
+.logo span{color:var(--accent2)}
+.nav{display:flex;gap:4px}
+.nav button{background:transparent;border:none;color:var(--text2);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:all .2s}
+.nav button.active{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.nav button:hover:not(.active){color:var(--text);background:rgba(255,255,255,.05)}
+.page{display:none;padding:20px}
+.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.card .lbl{font-size:12px;color:var(--text2);margin-bottom:6px}
+.card .val{font-size:22px;font-weight:500;color:var(--text)}
+.card .val.green{color:var(--accent2)}
+.card .val.red{color:var(--danger)}
+.card .val.purple{color:var(--accent)}
+.card .val.amber{color:var(--warn)}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}
+.section h3{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.form-grid.col2{grid-template-columns:1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;color:var(--text2)}
+.form-group input,.form-group select,.form-group textarea{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;transition:border .2s;font-family:var(--font-sans)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group select option{background:var(--bg3)}
+.btn{padding:8px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.85}
+.btn-success{background:var(--accent2);color:#1a1a1a}
+.btn-success:hover{opacity:.85}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{opacity:.85}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-outline:hover{color:var(--text);border-color:var(--accent)}
+.btn-warn{background:var(--warn);color:#1a1a1a}
+.btn-warn:hover{opacity:.85}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.03)}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.badge-green{background:rgba(93,202,165,.15);color:var(--accent2)}
+.badge-red{background:rgba(226,75,74,.15);color:var(--danger)}
+.badge-purple{background:rgba(127,119,221,.15);color:var(--accent)}
+.badge-amber{background:rgba(239,159,39,.15);color:var(--warn)}
+.wpp-area{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px}
+.wpp-area textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:13px;resize:vertical;outline:none;min-height:100px;font-family:var(--font-sans);line-height:1.6}
+.ai-result{background:rgba(127,119,221,.08);border:1px solid rgba(127,119,221,.3);border-radius:8px;padding:14px;margin-bottom:12px;display:none}
+.ai-result h4{font-size:13px;color:var(--accent);margin-bottom:10px}
+.empty{text-align:center;padding:32px;color:var(--text2);font-size:13px}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;background:transparent;border:1px solid var(--border);color:var(--text2);transition:all .2s}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.profit{font-weight:500}
+.profit.pos{color:var(--accent2)}
+.profit.neg{color:var(--danger)}
+.mini-bar{height:4px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden}
+.mini-bar-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .5s}
+.ai-loading{display:none;align-items:center;gap:8px;color:var(--accent);font-size:13px;padding:8px 0}
+.spinner{width:16px;height:16px;border:2px solid rgba(127,119,221,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.export-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+</style>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo">Suply<span>Control</span></div>
+    <div class="nav">
+      <button class="active" onclick="showPage('dashboard')">Dashboard</button>
+      <button onclick="showPage('vendas')">Vendas</button>
+      <button onclick="showPage('produtos')">Produtos</button>
+      <button onclick="showPage('clientes')">Clientes</button>
+      <button onclick="showPage('fretes')">Fretes</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="pg-dashboard" class="page active">
+    <div class="cards" id="dash-cards"></div>
+    <div class="section">
+      <h3>Últimas movimentações</h3>
+      <div id="dash-table-wrap"></div>
+    </div>
+  </div>
+
+  <!-- VENDAS -->
+  <div id="pg-vendas" class="page">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('nova-venda','vendas')">Nova venda</div>
+      <div class="tab" onclick="switchTab('wpp-venda','vendas')">Importar do WhatsApp</div>
+      <div class="tab" onclick="switchTab('historico','vendas')">Histórico</div>
+    </div>
+
+    <div id="tab-nova-venda">
+      <div class="section">
+        <h3>Registrar venda</h3>
+        <div class="form-grid">
+          <div class="form-group"><label>Cliente</label><select id="v-cliente"><option value="">Selecione...</option></select></div>
+          <div class="form-group"><label>Produto</label><select id="v-produto" onchange="calcVenda()"><option value="">Selecione...</option></select></div>
+          <div class="form-group"><label>Qtd</label><input type="number" id="v-qtd" value="1" min="1" oninput="calcVenda()"></div>
+          <div class="form-group"><label>Tipo</label>
+            <select id="v-tipo">
+              <option value="saida">Saída (Venda)</option>
+              <option value="entrada">Entrada (Compra/Reposição)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group"><label>Obs</label><input type="text" id="v-obs" placeholder="Opcional"></div>
+        </div>
+        <div id="v-preview" style="display:none;background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;display:none">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="v-preview-inner"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="registrarVenda()">Registrar</button>
+          <button class="btn btn-outline" onclick="calcVenda()">Calcular</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-wpp-venda" style="display:none">
+      <div class="section">
+        <h3>Importar do WhatsApp com IA</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Cole a conversa abaixo. A IA vai identificar cliente, produto e estado automaticamente.</p>
+        <div class="wpp-area">
+          <textarea id="wpp-text" placeholder="Cole aqui a conversa do WhatsApp...&#10;&#10;Ex: Oi, quero comprar o Whey 1kg, sou a Maria, moro em SP, fone 11 99999-0000"></textarea>
+        </div>
+        <div class="ai-loading" id="ai-loading"><div class="spinner"></div> Analisando conversa...</div>
+        <div class="ai-result" id="ai-result">
+          <h4>Dados identificados pela IA</h4>
+          <div id="ai-fields" class="form-grid"></div>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn btn-success" onclick="confirmarWpp()">Confirmar e registrar</button>
+            <button class="btn btn-outline" onclick="limparWpp()">Limpar</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="extrairWpp()">Extrair com IA</button>
+          <button class="btn btn-outline" onclick="limparWpp()">Limpar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-historico" style="display:none">
+      <div class="export-bar">
+        <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
+        <button class="btn btn-outline" onclick="exportPrint()">Imprimir / PDF</button>
+      </div>
+      <div class="section">
+        <h3>Histórico de movimentações</h3>
+        <div id="hist-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUTOS -->
+  <div id="pg-produtos" class="page">
+    <div class="section">
+      <h3>Cadastrar produto</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Nome</label><input type="text" id="p-nome" placeholder="Ex: Whey Protein 900g"></div>
+        <div class="form-group"><label>ML / Peso</label><input type="text" id="p-ml" placeholder="Ex: 900g, 1kg, 300ml"></div>
+        <div class="form-group"><label>Preço de custo (R$)</label><input type="number" id="p-custo" step="0.01" placeholder="0,00"></div>
+        <div class="form-group"><label>Preço de venda (R$)</label><input type="number" id="p-venda" step="0.01" placeholder="0,00"></div>
+        <div class="form-group"><label>Estoque atual</label><input type="number" id="p-estoque" value="0" min="0"></div>
+        <div class="form-group"><label>Categoria</label>
+          <select id="p-cat">
+            <option>Whey Protein</option><option>Creatina</option><option>Pré-treino</option>
+            <option>Vitaminas</option><option>Emagrecedor</option><option>Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-success" onclick="salvarProduto()">Salvar produto</button></div>
+    </div>
+    <div class="section">
+      <h3>Produtos cadastrados</h3>
+      <div id="prod-table"></div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div id="pg-clientes" class="page">
+    <div class="section">
+      <h3>Cadastrar cliente</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Nome completo</label><input type="text" id="c-nome" placeholder="Nome do cliente"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="c-tel" placeholder="(11) 99999-0000"></div>
+        <div class="form-group"><label>Estado</label>
+          <select id="c-estado">
+            <option value="">Selecione...</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+            <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+            <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+            <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+            <option>SE</option><option>TO</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Cidade</label><input type="text" id="c-cidade" placeholder="Cidade"></div>
+        <div class="form-group"><label>Endereço</label><input type="text" id="c-end" placeholder="Rua, número..."></div>
+        <div class="form-group"><label>Email</label><input type="text" id="c-email" placeholder="email@exemplo.com"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-success" onclick="salvarCliente()">Salvar cliente</button></div>
+    </div>
+    <div class="section">
+      <h3>Clientes cadastrados</h3>
+      <div id="cli-table"></div>
+    </div>
+  </div>
+
+  <!-- FRETES -->
+  <div id="pg-fretes" class="page">
+    <div class="section">
+      <h3>Configurar frete por estado</h3>
+      <div class="form-grid col2">
+        <div class="form-group"><label>Estado</label>
+          <select id="f-estado">
+            <option value="">Selecione...</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+            <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+            <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+            <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+            <option>SE</option><option>TO</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Valor do frete (R$)</label><input type="number" id="f-valor" step="0.01" placeholder="0,00"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-success" onclick="salvarFrete()">Salvar frete</button></div>
+    </div>
+    <div class="section">
+      <h3>Fretes cadastrados</h3>
+      <div id="frete-table"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let state = {
+  produtos: JSON.parse(localStorage.getItem('sc_produtos')||'[]'),
+  clientes: JSON.parse(localStorage.getItem('sc_clientes')||'[]'),
+  fretes: JSON.parse(localStorage.getItem('sc_fretes')||'{}'),
+  vendas: JSON.parse(localStorage.getItem('sc_vendas')||'[]'),
+  wppData: {}
+};
+let activeVendasTab = 'nova-venda';
+
+function save(){
+  localStorage.setItem('sc_produtos',JSON.stringify(state.produtos));
+  localStorage.setItem('sc_clientes',JSON.stringify(state.clientes));
+  localStorage.setItem('sc_fretes',JSON.stringify(state.fretes));
+  localStorage.setItem('sc_vendas',JSON.stringify(state.vendas));
+}
+
+function fmt(v){return 'R$ '+parseFloat(v||0).toFixed(2).replace('.',',');}
+function fmtN(v){return parseFloat(v||0).toFixed(2).replace('.',',');}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='dashboard')renderDash();
+  if(id==='produtos')renderProdutos();
+  if(id==='clientes')renderClientes();
+  if(id==='fretes')renderFretes();
+  if(id==='vendas'){renderVendaSelects();renderHistorico();}
+}
+
+function switchTab(tab,page){
+  document.querySelectorAll('#pg-'+page+' .tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  ['nova-venda','wpp-venda','historico'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+  activeVendasTab=tab;
+  if(tab==='historico')renderHistorico();
+}
+
+function renderDash(){
+  const vendas=state.vendas.filter(v=>v.tipo==='saida');
+  const compras=state.vendas.filter(v=>v.tipo==='entrada');
+  const totalVendas=vendas.reduce((s,v)=>s+(v.totalCliente||0),0);
+  const totalCusto=vendas.reduce((s,v)=>s+(v.totalCusto||0),0);
+  const totalCompras=compras.reduce((s,v)=>s+(v.totalCusto||0),0);
+  const lucro=totalVendas-totalCusto;
+  document.getElementById('dash-cards').innerHTML=`
+    <div class="card"><div class="lbl">Total vendido</div><div class="val purple">${fmt(totalVendas)}</div></div>
+    <div class="card"><div class="lbl">Custo total</div><div class="val red">${fmt(totalCusto)}</div></div>
+    <div class="card"><div class="lbl">Lucro bruto</div><div class="val ${lucro>=0?'green':'red'}">${fmt(lucro)}</div></div>
+    <div class="card"><div class="lbl">Compras/Rep.</div><div class="val amber">${fmt(totalCompras)}</div></div>
+    <div class="card"><div class="lbl">Qtd vendas</div><div class="val">${vendas.length}</div></div>
+    <div class="card"><div class="lbl">Clientes</div><div class="val">${state.clientes.length}</div></div>
+  `;
+  const ult=state.vendas.slice(-10).reverse();
+  if(!ult.length){document.getElementById('dash-table-wrap').innerHTML='<div class="empty">Nenhuma movimentação ainda</div>';return;}
+  document.getElementById('dash-table-wrap').innerHTML=`<table>
+    <thead><tr><th>Data</th><th>Tipo</th><th>Cliente</th><th>Produto</th><th>Total</th><th>Lucro</th></tr></thead>
+    <tbody>${ult.map(v=>`<tr>
+      <td>${v.data}</td>
+      <td><span class="badge ${v.tipo==='saida'?'badge-green':'badge-amber'}">${v.tipo==='saida'?'Venda':'Compra'}</span></td>
+      <td>${v.clienteNome||'-'}</td>
+      <td>${v.produtoNome}</td>
+      <td>${fmt(v.tipo==='saida'?v.totalCliente:v.totalCusto)}</td>
+      <td class="profit ${(v.lucro||0)>=0?'pos':'neg'}">${v.tipo==='saida'?fmt(v.lucro):'-'}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderVendaSelects(){
+  const cs=document.getElementById('v-cliente');
+  const ps=document.getElementById('v-produto');
+  cs.innerHTML='<option value="">Selecione...</option>'+state.clientes.map((c,i)=>`<option value="${i}">${c.nome} (${c.estado})</option>`).join('');
+  ps.innerHTML='<option value="">Selecione...</option>'+state.produtos.map((p,i)=>`<option value="${i}">${p.nome} - ${p.ml}</option>`).join('');
+}
+
+function calcVenda(){
+  const ci=document.getElementById('v-cliente').value;
+  const pi=document.getElementById('v-produto').value;
+  const qtd=parseInt(document.getElementById('v-qtd').value)||1;
+  if(ci===''||pi===''){document.getElementById('v-preview').style.display='none';return;}
+  const c=state.clientes[ci];const p=state.produtos[pi];
+  const frete=state.fretes[c.estado]||0;
+  const totalCusto=p.custo*qtd;
+  const totalVenda=p.venda*qtd;
+  const totalCliente=totalVenda+frete;
+  const lucro=totalVenda-totalCusto;
+  document.getElementById('v-preview').style.display='block';
+  document.getElementById('v-preview-inner').innerHTML=`
+    <div><div style="font-size:11px;color:var(--text2)">Custo total</div><div style="font-size:15px;color:var(--danger);font-weight:500">${fmt(totalCusto)}</div></div>
+    <div><div style="font-size:11px;color:var(--text2)">Frete (${c.estado})</div><div style="font-size:15px;color:var(--warn);font-weight:500">${fmt(frete)}</div></div>
+    <div><div style="font-size:11px;color:var(--text2)">Total p/ cliente</div><div style="font-size:15px;color:var(--accent);font-weight:500">${fmt(totalCliente)}</div></div>
+    <div><div style="font-size:11px;color:var(--text2)">Lucro bruto</div><div style="font-size:15px;color:${lucro>=0?'var(--accent2)':'var(--danger)'};font-weight:500">${fmt(lucro)}</div></div>
+  `;
+}
+
+function registrarVenda(){
+  const ci=document.getElementById('v-cliente').value;
+  const pi=document.getElementById('v-produto').value;
+  const qtd=parseInt(document.getElementById('v-qtd').value)||1;
+  const tipo=document.getElementById('v-tipo').value;
+  const obs=document.getElementById('v-obs').value;
+  if(ci===''||pi===''){alert('Selecione cliente e produto');return;}
+  const c=state.clientes[ci];const p=state.produtos[pi];
+  const frete=state.fretes[c.estado]||0;
+  const totalCusto=p.custo*qtd;
+  const totalVenda=p.venda*qtd;
+  const totalCliente=totalVenda+frete;
+  const lucro=totalVenda-totalCusto;
+  state.vendas.push({
+    id:Date.now(),data:new Date().toLocaleDateString('pt-BR'),
+    tipo,clienteNome:c.nome,clienteEstado:c.estado,
+    produtoNome:p.nome,qtd,custo:p.custo,venda:p.venda,
+    frete,totalCusto,totalVenda,totalCliente,lucro,obs
+  });
+  if(tipo==='saida'&&p.estoque!==undefined)p.estoque=Math.max(0,(p.estoque||0)-qtd);
+  if(tipo==='entrada')p.estoque=(p.estoque||0)+qtd;
+  save();
+  alert('Movimentação registrada!');
+  document.getElementById('v-preview').style.display='none';
+}
+
+function salvarProduto(){
+  const nome=document.getElementById('p-nome').value.trim();
+  if(!nome){alert('Informe o nome');return;}
+  state.produtos.push({
+    nome,ml:document.getElementById('p-ml').value,
+    custo:parseFloat(document.getElementById('p-custo').value)||0,
+    venda:parseFloat(document.getElementById('p-venda').value)||0,
+    estoque:parseInt(document.getElementById('p-estoque').value)||0,
+    cat:document.getElementById('p-cat').value
+  });
+  save();renderProdutos();
+  ['p-nome','p-ml','p-custo','p-venda','p-estoque'].forEach(id=>document.getElementById(id).value='');
+}
+
+function renderProdutos(){
+  if(!state.produtos.length){document.getElementById('prod-table').innerHTML='<div class="empty">Nenhum produto cadastrado</div>';return;}
+  document.getElementById('prod-table').innerHTML=`<table>
+    <thead><tr><th>Nome</th><th>ML/Peso</th><th>Categoria</th><th>Custo</th><th>Venda</th><th>Margem</th><th>Estoque</th><th></th></tr></thead>
+    <tbody>${state.produtos.map((p,i)=>{
+      const margem=p.custo>0?((p.venda-p.custo)/p.custo*100):0;
+      return`<tr>
+        <td>${p.nome}</td><td>${p.ml||'-'}</td>
+        <td><span class="badge badge-purple">${p.cat}</span></td>
+        <td>${fmt(p.custo)}</td><td>${fmt(p.venda)}</td>
+        <td class="profit pos">+${margem.toFixed(0)}%</td>
+        <td><span class="badge ${(p.estoque||0)>5?'badge-green':'badge-red'}">${p.estoque||0}</span></td>
+        <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="delProduto(${i})">X</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function delProduto(i){if(confirm('Remover produto?')){state.produtos.splice(i,1);save();renderProdutos();}}
+
+function salvarCliente(){
+  const nome=document.getElementById('c-nome').value.trim();
+  const estado=document.getElementById('c-estado').value;
+  if(!nome||!estado){alert('Nome e estado são obrigatórios');return;}
+  state.clientes.push({
+    nome,tel:document.getElementById('c-tel').value,
+    estado,cidade:document.getElementById('c-cidade').value,
+    end:document.getElementById('c-end').value,
+    email:document.getElementById('c-email').value
+  });
+  save();renderClientes();
+  ['c-nome','c-tel','c-cidade','c-end','c-email'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-estado').value='';
+}
+
+function renderClientes(){
+  if(!state.clientes.length){document.getElementById('cli-table').innerHTML='<div class="empty">Nenhum cliente cadastrado</div>';return;}
+  document.getElementById('cli-table').innerHTML=`<table>
+    <thead><tr><th>Nome</th><th>Telefone</th><th>Estado</th><th>Cidade</th><th>Email</th><th></th></tr></thead>
+    <tbody>${state.clientes.map((c,i)=>`<tr>
+      <td>${c.nome}</td><td>${c.tel||'-'}</td>
+      <td><span class="badge badge-amber">${c.estado}</span></td>
+      <td>${c.cidade||'-'}</td><td>${c.email||'-'}</td>
+      <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="delCliente(${i})">X</button></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function delCliente(i){if(confirm('Remover cliente?')){state.clientes.splice(i,1);save();renderClientes();}}
+
+function salvarFrete(){
+  const est=document.getElementById('f-estado').value;
+  const val=parseFloat(document.getElementById('f-valor').value);
+  if(!est||isNaN(val)){alert('Informe estado e valor');return;}
+  state.fretes[est]=val;save();renderFretes();
+  document.getElementById('f-estado').value='';
+  document.getElementById('f-valor').value='';
+}
+
+function renderFretes(){
+  const keys=Object.keys(state.fretes).sort();
+  if(!keys.length){document.getElementById('frete-table').innerHTML='<div class="empty">Nenhum frete cadastrado</div>';return;}
+  document.getElementById('frete-table').innerHTML=`<table>
+    <thead><tr><th>Estado</th><th>Frete</th><th></th></tr></thead>
+    <tbody>${keys.map(k=>`<tr>
+      <td><span class="badge badge-amber">${k}</span></td>
+      <td>${fmt(state.fretes[k])}</td>
+      <td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="delFrete('${k}')">X</button></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function delFrete(k){delete state.fretes[k];save();renderFretes();}
+
+function renderHistorico(){
+  if(!state.vendas.length){document.getElementById('hist-table').innerHTML='<div class="empty">Nenhuma movimentação</div>';return;}
+  const rev=[...state.vendas].reverse();
+  document.getElementById('hist-table').innerHTML=`<table>
+    <thead><tr><th>Data</th><th>Tipo</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Frete</th><th>Total cliente</th><th>Custo</th><th>Lucro</th><th>Obs</th></tr></thead>
+    <tbody>${rev.map((v,i)=>`<tr>
+      <td>${v.data}</td>
+      <td><span class="badge ${v.tipo==='saida'?'badge-green':'badge-amber'}">${v.tipo==='saida'?'Venda':'Compra'}</span></td>
+      <td>${v.clienteNome||'-'}</td><td>${v.produtoNome}</td><td>${v.qtd}</td>
+      <td>${fmt(v.frete)}</td>
+      <td>${fmt(v.tipo==='saida'?v.totalCliente:'-')}</td>
+      <td>${fmt(v.totalCusto)}</td>
+      <td class="profit ${(v.lucro||0)>=0?'pos':'neg'}">${v.tipo==='saida'?fmt(v.lucro):'-'}</td>
+      <td style="color:var(--text2);font-size:12px">${v.obs||''}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function exportCSV(){
+  const rows=[['Data','Tipo','Cliente','Estado','Produto','Qtd','Frete','Total Cliente','Custo Total','Lucro','Obs']];
+  state.vendas.forEach(v=>rows.push([v.data,v.tipo,v.clienteNome||'',v.clienteEstado||'',v.produtoNome,v.qtd,fmtN(v.frete),fmtN(v.totalCliente),fmtN(v.totalCusto),fmtN(v.lucro),v.obs||'']));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='suplementos_movimentacoes.csv';a.click();
+}
+
+function exportPrint(){
+  const w=window.open('','_blank');
+  const rows=state.vendas.map(v=>`<tr><td>${v.data}</td><td>${v.tipo==='saida'?'Venda':'Compra'}</td><td>${v.clienteNome||'-'}</td><td>${v.produtoNome}</td><td>${v.qtd}</td><td>R$ ${fmtN(v.frete)}</td><td>R$ ${fmtN(v.totalCliente)}</td><td>R$ ${fmtN(v.totalCusto)}</td><td>R$ ${fmtN(v.lucro)}</td></tr>`).join('');
+  w.document.write(`<html><head><title>Movimentações</title><style>body{font-family:sans-serif;font-size:12px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;text-align:left}th{background:#f5f5f5}</style></head><body><h2>Movimentações - SuplyControl</h2><table><thead><tr><th>Data</th><th>Tipo</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Frete</th><th>Total Cliente</th><th>Custo</th><th>Lucro</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+  w.print();
+}
+
+async function extrairWpp(){
+  const txt=document.getElementById('wpp-text').value.trim();
+  if(!txt){alert('Cole uma conversa primeiro');return;}
+  document.getElementById('ai-loading').style.display='flex';
+  document.getElementById('ai-result').style.display='none';
+  const produtos=state.produtos.map(p=>p.nome).join(', ')||'nenhum cadastrado';
+  const estados=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Você extrai dados de vendas de conversas de WhatsApp para um sistema de suplementos. Responda APENAS com JSON válido, sem markdown ou texto extra. Formato: {"nome":"","telefone":"","estado":"","cidade":"","produto":"","qtd":1,"obs":""}. Estado deve ser sigla (SP, RJ, MG etc). Produto deve ser o mais próximo dos disponíveis: ${produtos}. Se não encontrar um campo, deixe vazio ou 1 para qtd.`,
+        messages:[{role:'user',content:`Conversa:\n${txt}`}]
+      })
+    });
+    const data=await resp.json();
+    let json={};
+    try{json=JSON.parse(data.content[0].text);}catch(e){json={};}
+    state.wppData=json;
+    document.getElementById('ai-loading').style.display='none';
+    document.getElementById('ai-result').style.display='block';
+    document.getElementById('ai-fields').innerHTML=`
+      <div class="form-group"><label>Nome</label><input type="text" id="wf-nome" value="${json.nome||''}"></div>
+      <div class="form-group"><label>Telefone</label><input type="text" id="wf-tel" value="${json.telefone||''}"></div>
+      <div class="form-group"><label>Estado</label><select id="wf-estado">${estados.map(e=>`<option ${e===json.estado?'selected':''}>${e}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Cidade</label><input type="text" id="wf-cidade" value="${json.cidade||''}"></div>
+      <div class="form-group"><label>Produto</label><input type="text" id="wf-produto" value="${json.produto||''}"></div>
+      <div class="form-group"><label>Qtd</label><input type="number" id="wf-qtd" value="${json.qtd||1}" min="1"></div>
+      <div class="form-group"><label>Obs</label><input type="text" id="wf-obs" value="${json.obs||''}"></div>
+    `;
+  }catch(e){
+    document.getElementById('ai-loading').style.display='none';
+    alert('Erro ao processar. Verifique a conexão.');
+  }
+}
+
+function confirmarWpp(){
+  const nome=document.getElementById('wf-nome').value.trim();
+  const estado=document.getElementById('wf-estado').value;
+  const prodNome=document.getElementById('wf-produto').value.trim();
+  const qtd=parseInt(document.getElementById('wf-qtd').value)||1;
+  if(!nome||!prodNome){alert('Nome e produto são obrigatórios');return;}
+  let clienteIdx=state.clientes.findIndex(c=>c.nome.toLowerCase()===nome.toLowerCase());
+  if(clienteIdx===-1){
+    state.clientes.push({nome,tel:document.getElementById('wf-tel').value,estado,cidade:document.getElementById('wf-cidade').value,end:'',email:''});
+    clienteIdx=state.clientes.length-1;
+  }
+  let prodIdx=state.produtos.findIndex(p=>p.nome.toLowerCase().includes(prodNome.toLowerCase()));
+  if(prodIdx===-1){alert(`Produto "${prodNome}" não encontrado. Cadastre-o primeiro.`);return;}
+  const c=state.clientes[clienteIdx];const p=state.produtos[prodIdx];
+  const frete=state.fretes[c.estado]||0;
+  const totalCusto=p.custo*qtd;const totalVenda=p.venda*qtd;
+  const totalCliente=totalVenda+frete;const lucro=totalVenda-totalCusto;
+  state.vendas.push({id:Date.now(),data:new Date().toLocaleDateString('pt-BR'),tipo:'saida',clienteNome:c.nome,clienteEstado:c.estado,produtoNome:p.nome,qtd,custo:p.custo,venda:p.venda,frete,totalCusto,totalVenda,totalCliente,lucro,obs:document.getElementById('wf-obs').value});
+  p.estoque=Math.max(0,(p.estoque||0)-qtd);
+  save();limparWpp();
+  alert(`Venda registrada!\nCliente: ${nome}\nProduto: ${p.nome}\nTotal: R$ ${totalCliente.toFixed(2)}\nLucro: R$ ${lucro.toFixed(2)}`);
+}
+
+function limparWpp(){
+  document.getElementById('wpp-text').value='';
+  document.getElementById('ai-result').style.display='none';
+  document.getElementById('ai-loading').style.display='none';
+}
+
+renderDash();
+</script>
